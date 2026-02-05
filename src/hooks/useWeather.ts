@@ -6,13 +6,16 @@ const useWeather = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchWeather = async () => {
+    const fetchWeather = async (lat?: number, lon?: number) => {
         try {
             setLoading(true);
             setError(null);
 
+            const latitude = lat || 37.5665;
+            const longitude = lon || 126.9780;
+
             const res = await axios.get(
-                'https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current_weather=true'
+                `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
             );
 
             setCurrentTemp(res.data.current_weather.temperature);

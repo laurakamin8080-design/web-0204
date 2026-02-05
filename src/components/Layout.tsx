@@ -3,7 +3,7 @@ import NavBar from './NavBar';
 
 export default function Layout() {
     return (
-        <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+        <div className="min-h-screen flex flex-col bg-purple-50 dark:bg-slate-950 transition-colors duration-300">
             {/* Header with Glassmorphism */}
             <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
