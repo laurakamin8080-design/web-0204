@@ -1,3 +1,5 @@
+import WeatherWidget from '../components/WeatherWidget';
+
 export default function HomePage() {
   return (
     <div className="flex flex-col items-center justify-center text-center space-y-6 py-12">
@@ -16,6 +18,11 @@ export default function HomePage() {
           더 알아보기
         </button>
       </div>
+
+      <div className="mt-16 w-full max-w-md animate-fade-in-up">
+        <WeatherWidget />
+      </div>
     </div>
+
   );
 }
