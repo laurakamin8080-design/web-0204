@@ -5,6 +5,8 @@ import HomePage from './pages/HomePage';
 import TeamPage from './pages/TeamPage';
 import FashionPage from './pages/FashionPage';
 import WeatherPage from './pages/WeatherPage';
+import GuestbookPage from './pages/GuestbookPage';
+import SchoolPage from './pages/SchoolPage';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
           <Route path="team" element={<TeamPage />} /> {/* "/team" 경로 */}
           <Route path="weather" element={<WeatherPage />} /> {/* "/weather" 경로 */}
           <Route path="fashion" element={<FashionPage />} /> {/* "/fashion" 경로 */}
+          <Route path="guestbook" element={<GuestbookPage />} /> {/* "/guestbook" 경로 */}
+          <Route path="school" element={<SchoolPage />} /> {/* "/school" 경로 */}
         </Route>
       </Routes>
     </BrowserRouter>

@@ -6,6 +6,8 @@ export default function NavBar() {
         { name: '팀 소개', path: '/team' },
         { name: '날씨', path: '/weather' },
         { name: '패션 추천', path: '/fashion' },
+        { name: '방명록', path: '/guestbook' },
+        { name: '수강신청', path: '/school' },
     ];
 
     return (

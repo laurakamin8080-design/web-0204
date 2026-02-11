@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import useWeather from '../hooks/useWeather';
 import { useGeminiFashion } from '../hooks/useGeminiFashion';
 
@@ -50,9 +51,17 @@ export default function FashionPage() {
     const [members] = useState<string[]>(Object.keys(MEMBERS_DATA));
     const [selectedMemberId, setSelectedMemberId] = useState<string>('');
     const [memberDetail, setMemberDetail] = useState<Member | null>(null);
+    const location = useLocation();
 
     const { currentTemp, loading: weatherLoading, fetchWeather } = useWeather();
     const { recommendation, isThinking, geminiError, getFashionAdvice } = useGeminiFashion();
+
+    // 팀 소개 페이지에서 클릭해서 넘어왔을 경우, 해당 동물 자동 선택
+    useEffect(() => {
+        if (location.state && location.state.selectedMember) {
+            handleMemberSelect(location.state.selectedMember);
+        }
+    }, [location.state]);
 
     // Handle member selection and trigger everything
     const handleMemberSelect = async (username: string) => {
@@ -130,8 +139,8 @@ export default function FashionPage() {
                                 key={member}
                                 onClick={() => handleMemberSelect(member)}
                                 className={`p-4 rounded-2xl text-center transition-all duration-300 border-2 ${selectedMemberId === member
-                                        ? `${colors.active} text-white border-transparent shadow-lg scale-105`
-                                        : `${colors.bg} ${colors.border} hover:scale-102 hover:shadow-md`
+                                    ? `${colors.active} text-white border-transparent shadow-lg scale-105`
+                                    : `${colors.bg} ${colors.border} hover:scale-102 hover:shadow-md`
                                     }`}
                             >
                                 <div className={`w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center text-4xl ${selectedMemberId === member ? 'bg-white/20' : colors.emoji
