@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import useWeather from '../hooks/useWeather';
-import { useGeminiFashion } from '../hooks/useGeminiFashion';
 
 interface Member {
     id: string;
@@ -10,45 +8,52 @@ interface Member {
     style: string;
     location: string;
     items: string[];
+    statusMessage: string;
+    summary: string;
 }
 
-const CITY_COORDS: Record<string, { lat: number; lon: number }> = {
-    Seoul: { lat: 37.5665, lon: 126.9780 },
-    Busan: { lat: 35.1796, lon: 129.0756 },
-};
+
 
 const MEMBERS_DATA: Record<string, Member> = {
     '토끼': {
         id: '토끼',
-        name: '토끼',
+        name: '바비 교수',
         gender: '중성',
-        style: '귀여운',
-        location: 'Seoul',
-        items: ['🎀 핑크 베레모', '🧶 아이보리 꽈배기 니트', '🥕 당근 모양 브로치']
+        style: '복선 설계',
+        location: '토끼 캐릭터',
+        items: ['[치밀함: 측정불가]', '[떡밥 회수율: 100%]', '[특이사항: 반전 강박증]'],
+        statusMessage: "이미 당신은 제 복선에 갇혔습니다. 복습은 의미 없습니다. 앞을 보세요.",
+        summary: "데뷔작 단 한 줄로 독자 10만 명을 단체 멘붕에 빠뜨린 서사의 설계자."
     },
     '강아지': {
         id: '강아지',
-        name: '강아지',
+        name: '멍코 교수',
         gender: '중성',
-        style: '활발한',
-        location: 'Seoul',
-        items: ['🧢 블루 베이스볼 캡', '🧥 스포티 윈드브레이커', '🧣 개성 넘치는 반다나']
+        style: '인물 구축',
+        location: '강아지 캐릭터',
+        items: ['[인격 연금술: MAX]', '[매력적인 빌런 제조기]', '[특이사항: 조연 편애 심함]'],
+        statusMessage: "평범한 주인공은 죽은 주인공입니다. 제가 그 심장에 악마의 불을 붙여드리죠.",
+        summary: "엑스트라도 주인공을 죽이게 만드는 입체적 캐릭터 메이킹의 귀재."
     },
     '고양이': {
         id: '고양이',
-        name: '고양이',
+        name: '냐옹 교수',
         gender: '중성',
-        style: '우아한',
-        location: 'Busan',
-        items: ['🧣 실크 스카프', '🧥 슬림핏 트렌치 코트', '🦪 진주 레이어드 목걸이']
+        style: '문장론',
+        location: '고양이 캐릭터',
+        items: ['[문장 최면술: 1등급]', '[단어 선택 결벽증]', '[특이사항: 밤샘 집필 전문가]'],
+        statusMessage: "형용사는 사치입니다. 마침표 하나로 독자를 울리지 못하면 펜을 꺾으세요.",
+        summary: "조사 하나로 심박수를 조절하는, 밤을 훔치는 문장 살인마."
     },
     '햄스터': {
         id: '햄스터',
-        name: '햄스터',
+        name: '햄찌 교수',
         gender: '중성',
-        style: '깜찍한',
-        location: 'Busan',
-        items: ['🎒 옐로우 푸퍼 베스트', '🧤 몽글몽글 귀도리', '🌻 해바라기씨 미니 백']
+        style: '세계관',
+        location: '햄스터 캐릭터',
+        items: ['[차원 설계력: 우주급]', '[개연성 수호자]', '[특이사항: 지도 그리기 광인]'],
+        statusMessage: "현실이 지루하신가요? 제가 만든 세계에서는 당신이 곧 법이고 신입니다.",
+        summary: "현실보다 더 정교한 가상 세계를 구축해 독자를 귀화시키는 창조주."
     }
 };
 
@@ -58,9 +63,6 @@ export default function FashionPage() {
     const [memberDetail, setMemberDetail] = useState<Member | null>(null);
     const location = useLocation();
 
-    const { currentTemp, loading: weatherLoading, fetchWeather } = useWeather();
-    const { recommendation, isThinking, geminiError, getFashionAdvice } = useGeminiFashion();
-
     // 팀 소개 페이지에서 클릭해서 넘어왔을 경우, 해당 동물 자동 선택
     useEffect(() => {
         if (location.state && location.state.selectedMember) {
@@ -69,7 +71,7 @@ export default function FashionPage() {
     }, [location.state]);
 
     // Handle member selection and trigger everything
-    const handleMemberSelect = async (username: string) => {
+    const handleMemberSelect = (username: string) => {
         console.log('👤 Member selected:', username);
         setSelectedMemberId(username);
         setMemberDetail(null);
@@ -84,39 +86,6 @@ export default function FashionPage() {
 
         console.log('✅ Member detail loaded:', detail);
         setMemberDetail(detail);
-
-        // Fetch weather
-        const coords = CITY_COORDS[detail.location] || CITY_COORDS['Seoul'];
-        console.log('🌤️ Fetching weather for:', detail.location, coords);
-
-        try {
-            await fetchWeather(coords.lat, coords.lon);
-            console.log('✅ Weather fetched successfully');
-        } catch (error) {
-            console.error('❌ Weather fetch failed:', error);
-        }
-    };
-
-    // Manual trigger for fashion advice
-    const handleGetFashionAdvice = () => {
-        if (!memberDetail) {
-            console.error('❌ No member selected');
-            return;
-        }
-
-        if (currentTemp === null) {
-            console.error('❌ No weather data available');
-            return;
-        }
-
-        console.log('🎨 Triggering fashion advice manually...');
-        const condition = currentTemp > 20 ? '맑고 더움' : currentTemp > 10 ? '포근함' : '쌀쌀함';
-
-        getFashionAdvice(currentTemp, condition, {
-            gender: memberDetail.gender,
-            style: memberDetail.style,
-            location: memberDetail.location
-        });
     };
 
     return (
@@ -125,7 +94,7 @@ export default function FashionPage() {
             {/* Left Sidebar: Team Selection */}
             <aside className="w-1/4 min-w-[250px] bg-white rounded-3xl p-6 shadow-xl border border-slate-100 flex flex-col">
                 <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                    <span>🎨</span> 팀원 선택
+                    <span>🧪</span> 교수진 선택
                 </h2>
 
                 <div className="flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar">
@@ -154,7 +123,7 @@ export default function FashionPage() {
                                 </div>
                                 <span className={`font-bold text-lg block ${selectedMemberId === member ? 'text-white' : 'text-slate-700'
                                     }`}>
-                                    {member}
+                                    {MEMBERS_DATA[member].name}
                                 </span>
                             </button>
                         );
@@ -162,7 +131,7 @@ export default function FashionPage() {
                 </div>
 
                 <div className="mt-auto pt-6 text-xs text-slate-400 text-center">
-                    <p>동물 친구를 선택해서<br />맞춤 패션 추천을 받아보세요! ✨</p>
+                    <p>교수님을 선택하여<br />치명적인 창작의 부작용을 확인하세요! ☠️</p>
                 </div>
             </aside>
 
@@ -170,13 +139,13 @@ export default function FashionPage() {
             <main className="flex-1 bg-white rounded-3xl p-8 shadow-xl border border-slate-100 overflow-y-auto relative min-h-[500px]">
                 {!memberDetail ? (
                     <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-4">
-                        <div className="text-6xl grayscale opacity-30">👕</div>
-                        <p className="text-lg font-medium">왼쪽에서 팀원을 선택해주세요</p>
+                        <div className="text-6xl grayscale opacity-30">🧪</div>
+                        <p className="text-lg font-medium">왼쪽에서 교수님을 선택해주세요</p>
                     </div>
                 ) : (
                     <div className="max-w-3xl mx-auto space-y-8 animate-fade-in-up">
 
-                        {/* Header: Member Fashion Profile */}
+                        {/* Header: Member Profile */}
                         <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-slate-900 to-slate-800 p-10 text-white shadow-2xl transition-all duration-500 hover:shadow-purple-200/20">
                             {/* Animated Background Blobs */}
                             <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/20 rounded-full blur-[80px] -mr-40 -mt-40 animate-pulse"></div>
@@ -192,7 +161,7 @@ export default function FashionPage() {
                                                 Object.keys(MEMBERS_DATA).indexOf(memberDetail.id) === 2 ? '🐱' : '🐹'}
                                     </div>
                                     <div className="absolute -bottom-2 -right-2 bg-purple-500 text-white p-2 rounded-full shadow-lg border-2 border-slate-900 animate-bounce">
-                                        ✨
+                                        ✒️
                                     </div>
                                 </div>
 
@@ -200,118 +169,57 @@ export default function FashionPage() {
                                 <div className="flex-1 text-center md:text-left space-y-4">
                                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                                         <span className="px-4 py-1.5 bg-purple-500/20 backdrop-blur-sm border border-purple-500/30 text-purple-200 rounded-full text-xs font-black uppercase tracking-widest">
-                                            {memberDetail.style} STYLE
+                                            {memberDetail.style}
                                         </span>
                                         <span className="px-4 py-1.5 bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 text-blue-200 rounded-full text-xs font-black uppercase tracking-widest">
                                             {memberDetail.location}
                                         </span>
                                     </div>
-                                    <h1 className="text-5xl md:text-6xl font-black tracking-tighter">
+                                    <h1 className="text-4xl md:text-5xl font-black tracking-tighter">
                                         {memberDetail.name}
                                     </h1>
-                                    <p className="text-slate-400 font-medium text-lg italic max-w-md">
-                                        "오늘 같은 날씨에도 {memberDetail.name}만의 {memberDetail.style}한 무드를 잃지 마세요."
-                                    </p>
-                                </div>
-
-                                {/* Weather Info Badge */}
-                                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 text-center min-w-[150px] shadow-sm">
-                                    {weatherLoading ? (
-                                        <div className="animate-pulse space-y-2">
-                                            <div className="h-10 w-20 bg-white/10 rounded mx-auto"></div>
-                                            <div className="h-4 w-24 bg-white/10 rounded mx-auto"></div>
-                                        </div>
-                                    ) : currentTemp !== null ? (
-                                        <>
-                                            <div className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400">
-                                                {currentTemp}°
-                                            </div>
-                                            <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">
-                                                CURRENT TEMP
-                                            </div>
-                                            <div className="mt-4 flex items-center justify-center gap-1 text-xs font-bold text-blue-300">
-                                                <span className="w-2 h-2 bg-blue-400 rounded-full animate-ping"></span>
-                                                LIVE DATA
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="text-red-400 text-xs font-bold">WEATHER ERROR</div>
-                                    )}
+                                    <div className="bg-white/10 p-4 rounded-xl border-l-4 border-purple-400">
+                                        <p className="text-slate-200 font-medium text-lg italic max-w-md">
+                                            "{memberDetail.statusMessage}"
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Get Recommendation Button */}
-                        {currentTemp !== null && !recommendation && !isThinking && (
-                            <div className="text-center">
-                                <button
-                                    onClick={handleGetFashionAdvice}
-                                    className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                                >
-                                    ✨ AI 패션 추천 받기
+                        {/* One-Line Summary */}
+                        <div className="bg-slate-50 border-l-4 border-indigo-500 p-6 rounded-r-xl shadow-sm">
+                            <h3 className="text-sm font-bold text-indigo-500 uppercase tracking-widest mb-1">PROFESSOR SUMMARY</h3>
+                            <p className="text-xl font-bold text-slate-800">
+                                {memberDetail.summary}
+                            </p>
+                        </div>
+
+                        {/* Signature Traits Section */}
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+                                <span>📊</span> 교수 특징
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {memberDetail.items.map((item, idx) => (
+                                    <div key={idx} className="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm flex items-center justify-center gap-3 transform transition-transform hover:scale-102 hover:shadow-md hover:border-purple-100">
+                                        <span className="font-bold text-slate-700 text-center text-sm">{item}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* AI Section Placeholder (Hidden or Repurposed) */}
+                        <div className="bg-slate-900 rounded-2xl p-8 border border-slate-700 relative overflow-hidden group">
+                            <div className="relative z-10">
+                                <h3 className="text-lg font-bold text-white mb-2">🤖 AI 창작 상담소</h3>
+                                <p className="text-slate-400 text-sm mb-6">
+                                    교수님에게 당신의 고민을 털어놓아 보세요. (준비중)
+                                </p>
+                                <button className="px-6 py-3 bg-slate-800 text-slate-500 rounded-xl font-bold text-sm cursor-not-allowed border border-slate-700">
+                                    🚧 시스템 점검 중
                                 </button>
                             </div>
-                        )}
-
-                        {/* Signature Items Section */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {memberDetail.items.map((item, idx) => (
-                                <div key={idx} className="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm flex items-center gap-3 transform transition-transform hover:scale-102">
-                                    <span className="text-2xl">{item.split(' ')[0]}</span>
-                                    <span className="font-semibold text-slate-700">{item.split(' ').slice(1).join(' ')}</span>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* AI Recommendation Card */}
-                        <div className="bg-slate-50 rounded-2xl p-8 border border-slate-200 relative overflow-hidden group hover:border-purple-200 transition-colors">
-                            {/* Decorative Blobs */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-100 rounded-full blur-3xl opacity-50 -mr-16 -mt-16 pointer-events-none"></div>
-
-                            <h3 className="relative z-10 text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                                <span className="text-2xl">✨</span>
-                                TODAY'S LOOK
-                                {isThinking && <span className="text-xs text-purple-600 animate-pulse ml-2">Analyzing style...</span>}
-                            </h3>
-
-                            <div className="relative z-10 min-h-[200px]">
-                                {isThinking ? (
-                                    <div className="space-y-4 animate-pulse">
-                                        <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-                                        <div className="h-4 bg-slate-200 rounded w-5/6"></div>
-                                        <div className="h-4 bg-slate-200 rounded w-2/3"></div>
-                                        <div className="h-32 bg-slate-200 rounded w-full mt-6"></div>
-                                    </div>
-                                ) : recommendation ? (
-                                    <div className="prose prose-slate prose-lg max-w-none">
-                                        <div className="whitespace-pre-line leading-relaxed text-slate-700 font-medium">
-                                            {recommendation}
-                                        </div>
-                                    </div>
-                                ) : geminiError ? (
-                                    <div className="text-center py-10">
-                                        <p className="text-red-500 mb-4">{geminiError}</p>
-                                        <button onClick={handleGetFashionAdvice} className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800">
-                                            다시 시도
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="text-center py-12 text-slate-400">
-                                        <p>위 버튼을 눌러 AI 패션 추천을 받아보세요!</p>
-                                    </div>
-                                )}
-                            </div>
-
-                            {!isThinking && recommendation && (
-                                <div className="relative z-10 mt-8 flex justify-end">
-                                    <button
-                                        onClick={handleGetFashionAdvice}
-                                        className="text-sm font-semibold text-purple-600 hover:text-purple-800 transition-colors flex items-center gap-1"
-                                    >
-                                        ↻ 다른 추천 받기
-                                    </button>
-                                </div>
-                            )}
                         </div>
 
                     </div>

@@ -6,10 +6,9 @@ interface Member {
   name: string;
   role: string;
   emoji: string;
-  mbti: string;
-  hobby: string;
-  strength: string;
-  description: string;
+  title: string;
+  quote: string;
+  feature: string;
 }
 
 const TeamPage = () => {
@@ -23,61 +22,42 @@ const TeamPage = () => {
       name: '바비',
       role: 'Plot Designer',
       emoji: '🐰',
-      mbti: 'ENFJ',
-      strength: '치밀한 복선 설계',
-      hobby: '추리 소설 읽기',
-      description: '치밀한 복선과 서사의 설계자'
+      title: '[데자뷔의 늪]',
+      quote: "분명 처음 보는 문장인데, 왜 결말을 이미 알고 있는 기분이 들까요?",
+      feature: "독자를 뫼비우스의 띠에 가두고 즐거워함."
     },
     {
       id: 2,
       name: '멍코',
       role: 'Character Expert',
       emoji: '🐶',
-      mbti: 'ESTP',
-      strength: '입체적 캐릭터 조형',
-      hobby: '인간 관찰하기',
-      description: '매력적인 인물 조형의 대가'
+      title: '[다중 인격의 발현]',
+      quote: "거울 속의 당신은 누구입니까? 당신이 쓴 캐릭터가 당신의 목을 조르러 옵니다.",
+      feature: "자아가 너무 강해 작가를 잡아먹은 캐릭터 다수 보유."
     },
     {
       id: 3,
       name: '냐옹',
       role: 'Sentence Master',
       emoji: '🐱',
-      mbti: 'INTP',
-      strength: '감각적인 문장력',
-      hobby: '시집 필사',
-      description: '마음을 흔드는 문장의 연금술사'
+      title: '[활자 중독증]',
+      quote: "마침표를 찍는 순간, 당신은 다음 문장을 쓰지 않고는 견딜 수 없게 됩니다.",
+      feature: "수식어 없이 사람을 울리는 '금지된 수사법' 사용."
     },
     {
       id: 4,
       name: '햄찌',
       role: 'World Builder',
       emoji: '🐹',
-      mbti: 'ISTJ',
-      strength: '디테일한 설정',
-      hobby: '판타지 지도 그리기',
-      description: '탄탄한 세계관 구축의 전문가'
+      title: '[현실 부적응]',
+      quote: "지도를 덮지 마세요. 당신이 사는 이곳이 진짜 현실이라고 확신합니까?",
+      feature: "0과 1로 된 가상 세계에 독자 100만 명을 감금 중."
     }
   ];
 
   useEffect(() => {
     // DB 데이터 대신 하드코딩된 최신 데이터 사용 (세계관 변경 반영)
     setMembers(defaultMembers);
-    /* 
-    fetch('http://localhost:8000/api/team')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.length > 0) {
-          setMembers(data);
-        } else {
-          setMembers(defaultMembers);
-        }
-      })
-      .catch(err => {
-        console.error("데이터를 불러오지 못했습니다. 기본 데이터를 표시합니다.", err);
-        setMembers(defaultMembers);
-      });
-    */
   }, []);
 
   const handleCardClick = (name: string) => {
@@ -107,9 +87,9 @@ const TeamPage = () => {
                   {member.emoji}
                 </div>
 
-                {/* MBTI Tag */}
-                <div className="text-slate-400 text-sm font-medium tracking-wider mb-2">
-                  #{member.mbti}
+                {/* Title Tag */}
+                <div className="text-indigo-500 text-sm font-bold tracking-wider mb-2 uppercase">
+                  {member.title}
                 </div>
 
                 {/* Name */}
@@ -118,30 +98,24 @@ const TeamPage = () => {
                 </h3>
 
                 {/* Role */}
-                <p className="text-lg font-extrabold text-[#0070f3] mb-6 uppercase">
+                <p className="text-lg font-extrabold text-slate-400 mb-6 uppercase">
                   {member.role}
                 </p>
 
                 {/* Details Section */}
-                <div className="text-left space-y-3 mb-8 bg-slate-50/50 p-4 rounded-2xl border border-slate-100 group-hover:bg-white transition-colors duration-500">
-                  <p className="text-sm text-slate-600 flex items-center gap-2">
-                    <span className="text-lg">💪</span>
-                    <span className="font-bold">강점:</span> {member.strength}
+                <div className="text-left space-y-4 mb-8 bg-slate-50/50 p-6 rounded-2xl border border-slate-100 group-hover:bg-white transition-colors duration-500">
+                  <p className="text-lg text-slate-700 font-ink border-l-2 border-indigo-200 pl-3 leading-relaxed">
+                    "{member.quote}"
                   </p>
-                  <p className="text-sm text-slate-600 flex items-center gap-2">
-                    <span className="text-lg">🎨</span>
-                    <span className="font-bold">취미:</span> {member.hobby}
+                  <p className="text-xs text-slate-500 pt-2 border-t border-slate-200">
+                    <span className="font-bold text-slate-700">특이사항:</span> {member.feature}
                   </p>
                 </div>
 
-                {/* Description Quote */}
-                <p className="text-sm text-slate-500 italic mb-8 min-h-[40px] flex items-center justify-center">
-                  "{member.description}"
-                </p>
 
                 {/* Bottom Link */}
                 <div className="pt-4 border-t border-slate-50 flex items-center justify-center gap-1 text-[#a855f7] font-bold text-xs tracking-tight group-hover:text-[#9333ea] transition-colors">
-                  <span>✨</span> 클릭하여 패션 추천 받기
+                  <span>✨</span> 창작의 부작용 빠지기
                 </div>
               </div>
             </div>

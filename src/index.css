@@ -4,6 +4,17 @@
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+@font-face {
+  font-family: 'InkLipquid';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/InkLipquid.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-ink {
+  font-family: 'InkLipquid', cursive;
+}
+
 body {
   @apply bg-purple-50 text-slate-900 min-h-screen antialiased overflow-x-hidden;
   background-image:
@@ -43,4 +54,29 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 원고지 배경 스타일 */
+.bg-abyss {
+  /* 배경 그라데이션 */
+  background: linear-gradient(to bottom, #0F172A, #2E1065);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-abyss::before {
+  /* 원고지 격자 패턴 (투명도 5%) */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(to right, rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  /* 원고지 칸 크기 */
+  pointer-events: none;
 }
