@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { useState } from 'react';
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_KEY || '');
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
 
 export const useGeminiFashion = () => {
     const [recommendation, setRecommendation] = useState<string | null>(null);
@@ -19,7 +19,7 @@ export const useGeminiFashion = () => {
             setGeminiError(null);
             setRecommendation(null);
 
-            if (!import.meta.env.VITE_GEMINI_KEY) {
+            if (!import.meta.env.VITE_GEMINI_API_KEY) {
                 throw new Error('API Key가 설정되지 않았습니다.');
             }
 

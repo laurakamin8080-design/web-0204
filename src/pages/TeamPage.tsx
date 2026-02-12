@@ -20,47 +20,50 @@ const TeamPage = () => {
   const defaultMembers: Member[] = [
     {
       id: 1,
-      name: '토끼',
-      role: 'CEO',
+      name: '바비',
+      role: 'Plot Designer',
       emoji: '🐰',
       mbti: 'ENFJ',
-      strength: '트렌드 읽기',
-      hobby: '새로운 카페 투어',
-      description: '팀을 이끄는 귀여운 리더'
+      strength: '치밀한 복선 설계',
+      hobby: '추리 소설 읽기',
+      description: '치밀한 복선과 서사의 설계자'
     },
     {
       id: 2,
-      name: '강아지',
-      role: 'CTO',
+      name: '멍코',
+      role: 'Character Expert',
       emoji: '🐶',
       mbti: 'ESTP',
-      strength: '무한 긍정',
-      hobby: '산책하며 아이디어 구상',
-      description: '열정 가득한 기술 책임자'
+      strength: '입체적 캐릭터 조형',
+      hobby: '인간 관찰하기',
+      description: '매력적인 인물 조형의 대가'
     },
     {
       id: 3,
-      name: '고양이',
-      role: 'Designer',
+      name: '냐옹',
+      role: 'Sentence Master',
       emoji: '🐱',
       mbti: 'INTP',
-      strength: '논리적 분석',
-      hobby: '햇볕 아래 낮잠',
-      description: '감각적인 비주얼 담당'
+      strength: '감각적인 문장력',
+      hobby: '시집 필사',
+      description: '마음을 흔드는 문장의 연금술사'
     },
     {
       id: 4,
-      name: '햄스터',
-      role: 'Developer',
+      name: '햄찌',
+      role: 'World Builder',
       emoji: '🐹',
       mbti: 'ISTJ',
-      strength: '끈기',
-      hobby: '해바라기씨 맛집 탐방',
-      description: '꼼꼼한 코드 마스터'
+      strength: '디테일한 설정',
+      hobby: '판타지 지도 그리기',
+      description: '탄탄한 세계관 구축의 전문가'
     }
   ];
 
   useEffect(() => {
+    // DB 데이터 대신 하드코딩된 최신 데이터 사용 (세계관 변경 반영)
+    setMembers(defaultMembers);
+    /* 
     fetch('http://localhost:8000/api/team')
       .then(res => res.json())
       .then(data => {
@@ -74,6 +77,7 @@ const TeamPage = () => {
         console.error("데이터를 불러오지 못했습니다. 기본 데이터를 표시합니다.", err);
         setMembers(defaultMembers);
       });
+    */
   }, []);
 
   const handleCardClick = (name: string) => {
@@ -84,7 +88,7 @@ const TeamPage = () => {
     <div className="min-h-[calc(100vh-80px)] bg-slate-50/50 py-12 px-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-slate-800 mb-16 flex items-center justify-center gap-3">
-          <span className="text-2xl">🐾</span> 우리 패션팀 어벤져스
+          <span className="text-2xl">🖋️</span> 크리에이티브 작가 아카데미 교수진
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -99,7 +103,7 @@ const TeamPage = () => {
 
               <div className="relative z-10">
                 {/* Emoji with subtle animation */}
-                <div className="text-7xl mb-6 transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                <div className="text-7xl mb-6 transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 inline-block filter drop-shadow-sm">
                   {member.emoji}
                 </div>
 
@@ -110,11 +114,11 @@ const TeamPage = () => {
 
                 {/* Name */}
                 <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                  {member.name}
+                  {member.name} 교수
                 </h3>
 
                 {/* Role */}
-                <p className="text-lg font-extrabold text-[#0070f3] mb-6">
+                <p className="text-lg font-extrabold text-[#0070f3] mb-6 uppercase">
                   {member.role}
                 </p>
 

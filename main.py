@@ -64,40 +64,62 @@ def get_students():
     finally:
         conn.close()
 
-# 수강 신청하기
+# [수강 신청] 기능
 @app.post("/api/enroll")
 async def enroll(data: dict):
     conn = get_db('school_system')
     try:
         with conn.cursor() as cur:
-            try:
-                cur.execute(
-                    "INSERT INTO enrollments (student_id, course_id) VALUES (%s, %s)",
-                    (data['student_id'], data['course_id'])
-                )
-                conn.commit()
-                return {"message": "수강 신청 성공! 🎉"}
-            except:
-                raise HTTPException(status_code=400, detail="이미 신청한 강의입니다!")
+            # 1. 먼저 현재 신청 인원 확인
+            cur.execute("SELECT COUNT(*) as count FROM enrollments WHERE course_id = %s", (data['course_id'],))
+            current_count = cur.fetchone()['count']
+            
+            # 2. 최대 인원 확인
+            cur.execute("SELECT max_students FROM courses WHERE id = %s", (data['course_id'],))
+            max_limit = cur.fetchone()['max_students']
+            
+            # 3. 정원 초과 체크
+            if current_count >= max_limit:
+                return {"message": "정원이 초과되었습니다!"}
+            
+            # 4. 신청 기록 저장
+            cur.execute("INSERT INTO enrollments (student_id, course_id) VALUES (%s, %s)", 
+                        (data['student_id'], data['course_id']))
+            conn.commit()
+            return {"message": "수강 신청 성공!"}
     finally:
         conn.close()
 
-# 수강 취소하기 (추가 요청하신 기능!)
-@app.post("/api/unenroll")
-async def unenroll(data: dict):
+# [수강 취소] 기능
+@app.post("/api/cancel")
+async def cancel_enroll(data: dict):
     conn = get_db('school_system')
     try:
         with conn.cursor() as cur:
-            cur.execute(
-                "DELETE FROM enrollments WHERE student_id = %s AND course_id = %s",
-                (data['student_id'], data['course_id'])
-            )
+            cur.execute("DELETE FROM enrollments WHERE student_id = %s AND course_id = %s",
+                        (data['student_id'], data['course_id']))
             conn.commit()
-            return {"message": "수강 취소가 완료되었습니다. 👋"}
+            return {"message": "취소 완료!"}
+    finally:
+        conn.close()
+
+# [나의 수강 내역] 불러오기
+@app.get("/api/my-courses/{student_id}")
+def get_my_courses(student_id: int):
+    conn = get_db('school_system')
+    try:
+        with conn.cursor() as cur:
+            sql = """
+            SELECT c.* FROM courses c
+            JOIN enrollments e ON c.id = e.course_id
+            WHERE e.student_id = %s
+            """
+            cur.execute(sql, (student_id,))
+            return cur.fetchall()
     finally:
         conn.close()
 
 if __name__ == "__main__":
     import uvicorn
-    # 서버 실행 (포트 8000)
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # 서버 실행 (포트 8000), 코드 변경 시 자동 재시작(reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

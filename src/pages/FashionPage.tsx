@@ -9,6 +9,7 @@ interface Member {
     gender: string;
     style: string;
     location: string;
+    items: string[];
 }
 
 const CITY_COORDS: Record<string, { lat: number; lon: number }> = {
@@ -22,28 +23,32 @@ const MEMBERS_DATA: Record<string, Member> = {
         name: '토끼',
         gender: '중성',
         style: '귀여운',
-        location: 'Seoul'
+        location: 'Seoul',
+        items: ['🎀 핑크 베레모', '🧶 아이보리 꽈배기 니트', '🥕 당근 모양 브로치']
     },
     '강아지': {
         id: '강아지',
         name: '강아지',
         gender: '중성',
         style: '활발한',
-        location: 'Seoul'
+        location: 'Seoul',
+        items: ['🧢 블루 베이스볼 캡', '🧥 스포티 윈드브레이커', '🧣 개성 넘치는 반다나']
     },
     '고양이': {
         id: '고양이',
         name: '고양이',
         gender: '중성',
         style: '우아한',
-        location: 'Busan'
+        location: 'Busan',
+        items: ['🧣 실크 스카프', '🧥 슬림핏 트렌치 코트', '🦪 진주 레이어드 목걸이']
     },
     '햄스터': {
         id: '햄스터',
         name: '햄스터',
         gender: '중성',
         style: '깜찍한',
-        location: 'Busan'
+        location: 'Busan',
+        items: ['🎒 옐로우 푸퍼 베스트', '🧤 몽글몽글 귀도리', '🌻 해바라기씨 미니 백']
     }
 };
 
@@ -171,34 +176,68 @@ export default function FashionPage() {
                 ) : (
                     <div className="max-w-3xl mx-auto space-y-8 animate-fade-in-up">
 
-                        {/* Header: Member Info & Weather */}
-                        <div className="flex justify-between items-end border-b border-slate-100 pb-6">
-                            <div>
-                                <span className="inline-block px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
-                                    {memberDetail.style}
-                                </span>
-                                <h1 className="text-4xl font-extrabold text-slate-900 mb-1">
-                                    {memberDetail.name} <span className="text-slate-400 font-light text-2xl">for {memberDetail.location}</span>
-                                </h1>
-                            </div>
-                            <div className="text-right">
-                                {weatherLoading ? (
-                                    <div className="animate-pulse flex flex-col items-end">
-                                        <div className="h-8 w-16 bg-slate-200 rounded mb-1"></div>
-                                        <div className="h-4 w-24 bg-slate-200 rounded"></div>
+                        {/* Header: Member Fashion Profile */}
+                        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-slate-900 to-slate-800 p-10 text-white shadow-2xl transition-all duration-500 hover:shadow-purple-200/20">
+                            {/* Animated Background Blobs */}
+                            <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/20 rounded-full blur-[80px] -mr-40 -mt-40 animate-pulse"></div>
+                            <div className="absolute bottom-0 left-0 w-60 h-60 bg-blue-500/10 rounded-full blur-[60px] -ml-20 -mb-20"></div>
+
+                            <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
+                                {/* Character Visual */}
+                                <div className="relative group">
+                                    <div className="absolute -inset-4 bg-gradient-to-tr from-purple-500 to-blue-500 rounded-full opacity-20 group-hover:opacity-40 blur-xl transition-opacity duration-500"></div>
+                                    <div className="w-40 h-40 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center text-8xl shadow-inner transform transition-transform duration-700 group-hover:scale-110 group-hover:rotate-6">
+                                        {Object.keys(MEMBERS_DATA).indexOf(memberDetail.id) === 0 ? '🐰' :
+                                            Object.keys(MEMBERS_DATA).indexOf(memberDetail.id) === 1 ? '🐶' :
+                                                Object.keys(MEMBERS_DATA).indexOf(memberDetail.id) === 2 ? '🐱' : '🐹'}
                                     </div>
-                                ) : currentTemp !== null ? (
-                                    <>
-                                        <div className="text-5xl font-bold text-slate-800">
-                                            {currentTemp}° <span className="text-2xl text-slate-400">C</span>
+                                    <div className="absolute -bottom-2 -right-2 bg-purple-500 text-white p-2 rounded-full shadow-lg border-2 border-slate-900 animate-bounce">
+                                        ✨
+                                    </div>
+                                </div>
+
+                                {/* Info Details */}
+                                <div className="flex-1 text-center md:text-left space-y-4">
+                                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                                        <span className="px-4 py-1.5 bg-purple-500/20 backdrop-blur-sm border border-purple-500/30 text-purple-200 rounded-full text-xs font-black uppercase tracking-widest">
+                                            {memberDetail.style} STYLE
+                                        </span>
+                                        <span className="px-4 py-1.5 bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 text-blue-200 rounded-full text-xs font-black uppercase tracking-widest">
+                                            {memberDetail.location}
+                                        </span>
+                                    </div>
+                                    <h1 className="text-5xl md:text-6xl font-black tracking-tighter">
+                                        {memberDetail.name}
+                                    </h1>
+                                    <p className="text-slate-400 font-medium text-lg italic max-w-md">
+                                        "오늘 같은 날씨에도 {memberDetail.name}만의 {memberDetail.style}한 무드를 잃지 마세요."
+                                    </p>
+                                </div>
+
+                                {/* Weather Info Badge */}
+                                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 text-center min-w-[150px] shadow-sm">
+                                    {weatherLoading ? (
+                                        <div className="animate-pulse space-y-2">
+                                            <div className="h-10 w-20 bg-white/10 rounded mx-auto"></div>
+                                            <div className="h-4 w-24 bg-white/10 rounded mx-auto"></div>
                                         </div>
-                                        <div className="text-sm text-slate-500 font-medium mt-1">
-                                            현재 {memberDetail.location} 날씨
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="text-red-400 text-sm">날씨 로드 실패</div>
-                                )}
+                                    ) : currentTemp !== null ? (
+                                        <>
+                                            <div className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400">
+                                                {currentTemp}°
+                                            </div>
+                                            <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">
+                                                CURRENT TEMP
+                                            </div>
+                                            <div className="mt-4 flex items-center justify-center gap-1 text-xs font-bold text-blue-300">
+                                                <span className="w-2 h-2 bg-blue-400 rounded-full animate-ping"></span>
+                                                LIVE DATA
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="text-red-400 text-xs font-bold">WEATHER ERROR</div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -213,6 +252,16 @@ export default function FashionPage() {
                                 </button>
                             </div>
                         )}
+
+                        {/* Signature Items Section */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {memberDetail.items.map((item, idx) => (
+                                <div key={idx} className="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm flex items-center gap-3 transform transition-transform hover:scale-102">
+                                    <span className="text-2xl">{item.split(' ')[0]}</span>
+                                    <span className="font-semibold text-slate-700">{item.split(' ').slice(1).join(' ')}</span>
+                                </div>
+                            ))}
+                        </div>
 
                         {/* AI Recommendation Card */}
                         <div className="bg-slate-50 rounded-2xl p-8 border border-slate-200 relative overflow-hidden group hover:border-purple-200 transition-colors">

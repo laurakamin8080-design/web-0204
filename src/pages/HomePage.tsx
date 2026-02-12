@@ -61,6 +61,39 @@ export default function HomePage() {
         <WeatherWidget />
       </div>
 
+      {/* Modern Fashion Highlight Section */}
+      <div className="w-full space-y-12 py-8 bg-gradient-to-br from-white to-slate-50/50 rounded-[3rem] p-10 border border-slate-100 shadow-sm overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-100 rounded-full blur-3xl opacity-30 -mr-20 -mt-20 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-30 -ml-20 -mb-20 pointer-events-none"></div>
+
+        <div className="relative z-10 flex flex-col md:flex-row items-end justify-between gap-6">
+          <div className="space-y-2">
+            <span className="text-purple-600 font-bold text-sm tracking-widest uppercase">Style of the Day</span>
+            <h2 className="text-4xl font-extrabold text-slate-900 leading-tight">오늘의 패션 하이라이트</h2>
+          </div>
+          <Link to="/fashion" className="px-6 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all flex items-center gap-2 group">
+            전체 추천 보기 <span className="group-hover:translate-x-1 transition-transform">→</span>
+          </Link>
+        </div>
+
+        <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { name: '토끼', emoji: '🐰', item: '핑크 베레모', color: 'bg-pink-50 text-pink-700' },
+            { name: '강아지', emoji: '🐶', item: '블루 베이스볼 캡', color: 'bg-blue-50 text-blue-700' },
+            { name: '고양이', emoji: '🐱', item: '실크 스카프', color: 'bg-indigo-50 text-indigo-700' },
+            { name: '햄스터', emoji: '🐹', item: '옐로우 푸퍼 베스트', color: 'bg-amber-50 text-amber-700' }
+          ].map((look, i) => (
+            <div key={i} className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">{look.emoji}</div>
+              <h4 className="font-bold text-slate-800 text-lg mb-1">{look.name}의 Pick</h4>
+              <p className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${look.color}`}>
+                {look.item}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Projects Grid */}
       <div className="w-full space-y-8">
         <div className="flex items-center justify-between">
